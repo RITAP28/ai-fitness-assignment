@@ -1,7 +1,7 @@
 'use client'
 
 import { XIcon } from "lucide-react"
-import React, { useState } from "react"
+import React, { use, useState } from "react"
 import {
   Select,
   SelectContent,
@@ -19,13 +19,17 @@ import { Label } from "../ui/label"
 import { Slider } from "../ui/slider"
 import { Button } from "../ui/button"
 import axios from "axios"
-import { IFormDataProps } from "@/utils/interfaces"
+import { IFormDataProps, IUserProps } from "@/utils/interfaces"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 interface IFormProps {
+    user: IUserProps
     setFormOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Form({ setFormOpen }: IFormProps): React.ReactElement {
+export default function Form({ user, setFormOpen }: IFormProps): React.ReactElement {
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,19 +43,47 @@ export default function Form({ setFormOpen }: IFormProps): React.ReactElement {
     workoutLocation: null,
     dietaryPref: null,
     medHistory: null,
-    stressLevel: null
+    stressLevel: null,
+    planDuration: null
   });
 
   const handleSubmit = async () => {
+    setLoading(true);
+    setError(null);
+
+    if (
+        !formData.age ||
+        !formData.gender ||
+        !formData.height ||
+        !formData.weight ||
+        !formData.fitnessGoal ||
+        !formData.fitnessLevel ||
+        !formData.workoutLocation ||
+        !formData.dietaryPref ||
+        !formData.medHistory ||
+        !formData.stressLevel ||
+        !formData.planDuration
+    ) {
+        toast.error('all fields are required');
+        setError('all fields are required');
+    };
+
     try {
-        console.log('formdata: ', formData);
+        const response = await axios.post(`/api/generate/plan/${user.id}`, {
+            formData: formData
+        });
+        if (response.status === 201) {
+            console.log('response: ', response.data);
+            router.push('/source');
+            toast.success("Plan generated successfully");
+        }
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.error(error?.response?.data?.error || "Form submission failed");
+            toast.error(error?.response?.data?.error || "Form submission failed");
             setError(error?.response?.data?.error || "Form submission failed");
         } else {
+            toast.error('Something went wrong. Please try again.');
             setError("Something went wrong. Please try again.");
-            console.error("Something went wrong. Please try again.");
         }
     } finally {
         setLoading(false);
@@ -229,6 +261,24 @@ export default function Form({ setFormOpen }: IFormProps): React.ReactElement {
                     </div>
                 </div>
                 <div className="w-full flex flex-row items-center justify-between">
+                    <label className="w-[30%] font-medium tracking-tight">Duration</label>
+                    <div className="w-[70%]">
+                        <Select onValueChange={(value) => setFormData({ ...formData, planDuration: value as "15 mins" | "30 mins" | "60 mins" | "90 mins" })}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select an option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="15 mins">15 mins</SelectItem>
+                                <SelectItem value="30 mins">30 mins</SelectItem>
+                                <SelectItem value="60 mins">60 mins</SelectItem>
+                                <SelectItem value="90 mins">90 mins</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <div className="w-full flex flex-row items-center justify-between">
                     <label className="w-[30%] font-medium tracking-tight">Stress Levels</label>
                     <div className="w-[70%]">
                         <Slider defaultValue={[33]} max={100} step={10} onValueChange={(value) => setFormData({ ...formData, stressLevel: value[0] })} />
@@ -238,8 +288,22 @@ export default function Form({ setFormOpen }: IFormProps): React.ReactElement {
 
             {/* button */}
             <div className="w-full flex justify-center items-center py-2">
-                <Button onClick={handleSubmit}>Generate</Button>
+                <Button
+                    disabled={loading}
+                    onClick={handleSubmit}
+                >
+                    {loading ? "Generating..." : "Generate"}
+                </Button>
             </div>
+
+            {/* error */}
+            {error && (
+                <div className="w-full flex justify-center items-center py-2">
+                    <p className="text-red-500 text-sm tracking-tight">
+                        {error}
+                    </p>
+                </div>
+            )}
         </div>
     </div>
   )

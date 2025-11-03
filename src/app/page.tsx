@@ -1,33 +1,15 @@
-"use client"
+import Hero from "@/components/custom/hero";
+import Unauthorised from "@/components/custom/unauthorised";
+import { getServerSession } from "@/lib/get-session";
+import { IUserProps } from "@/utils/interfaces";
 
-import Form from "@/components/custom/form";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-
-export default function Home() {
-  const [formOpen, setFormOpen] = useState<boolean>(false);
+export default async function Home() {
+  const session = await getServerSession();
+  const user = session?.user;
 
   return (
     <div className="w-full min-h-screen bg-gray-100 text-black">
-      <div className="w-full h-screen flex flex-col justify-center items-center">
-        <div className="w-full flex flex-col justify-center items-center leading-tight">
-          <p className="font-bold tracking-tighter text-[5rem]">
-            Your Personal AI Fitness Coach
-          </p>
-          <p className="text-2xl tracking-tighter">
-            Get a custom workout & diet plan in seconds — built just for you.
-          </p>
-        </div>
-        <div className="pt-5">
-          <Button
-            className="bg-black text-white hover:cursor-pointer hover:bg-gray-700 tracking-tighter font-semibold text-lg hover:scale-105 transition duration-200 ease-in-out"
-            onClick={() => setFormOpen(true)}
-          >
-            Generate my first plan
-          </Button>
-        </div>
-        {formOpen && <Form setFormOpen={setFormOpen} />}
-      </div>
+      <Hero user={user as IUserProps} />
     </div>
   );
 }

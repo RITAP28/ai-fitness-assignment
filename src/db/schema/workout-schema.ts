@@ -6,7 +6,7 @@ export const workoutPlan = pgTable('workout_plan', {
     id: uuid('id').primaryKey().defaultRandom(),
     userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
     fitnessGoal: fitnessGoalEnum().notNull(),
-    fitnessLevelEnum: fitnessLevelEnum().notNull(),
+    fitnessLevel: fitnessLevelEnum().notNull(),
     workoutLocation: workoutLocationEnum().notNull(),
     planDuration: text('plan_duration').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
