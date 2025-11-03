@@ -26,11 +26,11 @@ export default function Hero({ user } : { user: IUserProps }) {
                 if (!user) {
                     router.push('/login');
                 } else {
-                    setFormOpen(true)
+                    router.push('/source');
                 }
             }}
           >
-            Generate my first plan
+            Go to your workout
           </Button>
         </div>
         {formOpen && <Form setFormOpen={setFormOpen} user={user} />}

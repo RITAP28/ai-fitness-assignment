@@ -14,6 +14,7 @@ interface IDietPlanProps {
     dietPreference: "veg" | "non-veg" | "vegan" | "keto",
     caloriesTarget: string
     meals: {
+        itemId: string
         mealType: string
         totalCalories: string
         name: string
@@ -202,7 +203,7 @@ export default function Plans({ user }: IPlanProps): React.ReactElement {
                                                     </div>
 
                                                 </div>
-                                                {modalOpen && selectedDiet && selectedMealType && <DietModal setModalOpen={setModalOpen} diet={day.diet} selectedMealType={selectedMealType} />}
+                                                {modalOpen && selectedDiet && selectedMealType && <DietModal user={user} setModalOpen={setModalOpen} diet={day.diet} selectedMealType={selectedMealType} handleFetchWorkoutPlans={handleFetchWorkoutPlans} loading={loading} error={error} />}
                                             </div>
                                         ))}
                                     </div>

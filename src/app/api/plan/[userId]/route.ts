@@ -10,6 +10,7 @@ interface IDietPlanProps {
     dietPreference: "veg" | "non-veg" | "vegan" | "keto",
     caloriesTarget: string
     meals: {
+        itemId: string;
         mealType: string
         totalCalories: string
         name: string
@@ -118,6 +119,7 @@ export async function GET(req: NextRequest, { params } : { params : { userId: st
                     diet_object.meals.push({
                         mealType: meal.mealType,
                         totalCalories: meal.totalCalories as string,
+                        itemId: item.id,
                         name: item.name,
                         quantity: item.quantity,
                         calories: item.calories as string,
