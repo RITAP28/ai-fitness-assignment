@@ -4,8 +4,25 @@ import { db } from "@/lib/db";
 import { IDietPlanProps, IFormDataProps } from "@/utils/interfaces";
 import { Type } from "@google/genai"
 
-export const dietPlanGenerator = async (userId: string, formData: IFormDataProps) => {
+interface IExerciseProps {
+    id?: string
+    name: string
+    sets: string
+    reps: string
+    restTime: string
+    imageUrl?: string
+    exercise_description?: string
+}
+
+export const dietPlanGenerator = async (userId: string, dayId: string, focusArea: string, exercise: IExerciseProps[], formData: IFormDataProps) => {
     const { age, gender, height, weight, fitnessGoal, fitnessLevel, dietaryPref, medHistory, stressLevel } = formData;
+    const exerciseList = exercise
+        .map(
+            (ex, index) =>
+                `${index + 1}. ${ex.name} — ${ex.sets} sets x ${ex.reps} reps, Rest: ${ex.restTime}. Notes: ${ex.exercise_description}`
+        )
+        .join("\n");
+
     const prompt = `
     You are an AI Nutrition Expert. Generate a personalized 7-day diet plan based on user profile.
 
@@ -20,8 +37,13 @@ Diet Preference: ${dietaryPref}
 Medical History: ${medHistory || "None"}
 Stress Level: ${stressLevel || "Not provided"}
 
+### Muscle Focused today: **${focusArea}**
+
+### Exercise for today:
+${exerciseList}
+
 ### Diet Rules
-- Provide a structured meal plan for **7 days**
+- Provide a structured meal plan for this day, based on the exercises performed
 - Each day must include:
   - Breakfast
   - Lunch
@@ -118,12 +140,13 @@ Return ONLY JSON. No extra text.
         });
 
         const generatedDietPlan = JSON.parse(response.text as string) as IDietPlanProps;
-        console.log('generated diet plan: ', generatedDietPlan);
+        console.log(`generated diet plan for ${dayId}: `, generatedDietPlan);
 
         const [savedDietPlan] = await db
             .insert(dietPlan)
             .values({
                 userId: userId,
+                dayId: dayId,
                 dietPreference: dietaryPref === 'non_veg' ? 'non-veg' : dietaryPref as 'veg' | 'vegan' | 'keto' | 'non-veg',
                 caloriesTarget: generatedDietPlan.caloriesTarget,
                 createdAt: new Date(Date.now()),
@@ -136,8 +159,9 @@ Return ONLY JSON. No extra text.
                 .insert(meal)
                 .values({
                     userId: userId,
+                    dayId: dayId,
                     planId: savedDietPlan.id,
-                    mealType: diet.mealType,
+                    mealType: diet.mealType.toLowerCase(),
                     totalCalories: diet.totalCalories,
                     createdAt: new Date(Date.now()),
                     updatedAt: new Date(Date.now())
@@ -149,6 +173,7 @@ Return ONLY JSON. No extra text.
                     .insert(foodItem)
                     .values({
                         userId: userId,
+                        dayId: dayId,
                         planId: savedDietPlan.id,
                         mealId: savedMeal.id,
                         name: item.name,

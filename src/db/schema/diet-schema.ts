@@ -1,10 +1,12 @@
 import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { dietaryPrefEnum, mealType } from "./enums";
 import { user } from "./auth-schema";
+import { workoutDay } from "./workout-schema";
 
 export const dietPlan = pgTable('diet_plan', {
     id: uuid('id').primaryKey().defaultRandom(),
     userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
+    dayId: uuid('day_id').references(() => workoutDay.id, { onDelete: 'cascade' }).notNull(),
     dietPreference: dietaryPrefEnum().notNull(),
     caloriesTarget: text('calories_target').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -14,8 +16,9 @@ export const dietPlan = pgTable('diet_plan', {
 export const meal = pgTable('meal', {
     id: uuid('id').primaryKey().defaultRandom(),
     userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
+    dayId: uuid('day_id').references(() => workoutDay.id, { onDelete: 'cascade' }).notNull(),
     planId: uuid('plan_id').references(() => dietPlan.id, { onDelete: 'cascade' }).notNull(),
-    mealType: mealType().notNull(),
+    mealType: text('meal_type').notNull(),
     totalCalories: text('total_calories'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at')
@@ -26,6 +29,7 @@ export const foodItem = pgTable('diet_food_item', {
     userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
     planId: uuid('plan_id').references(() => dietPlan.id, { onDelete: 'cascade' }).notNull(),
     mealId: uuid('meal_id').references(() => meal.id, { onDelete: 'cascade' }).notNull(),
+    dayId: uuid('day_id').references(() => workoutDay.id, { onDelete: 'cascade' }).notNull(),
     name: varchar('item_name', { length: 255 }).notNull(),
     quantity: text('item_quantity').notNull(),
     calories: text('calories'),

@@ -1,7 +1,7 @@
 'use client'
 
 import { XIcon } from "lucide-react"
-import React, { use, useState } from "react"
+import React, { useState } from "react"
 import {
   Select,
   SelectContent,

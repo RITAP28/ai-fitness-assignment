@@ -1,10 +1,18 @@
+import Plans from "@/components/custom/source/plans";
+import Unauthorised from "@/components/custom/unauthorised";
+import { getServerSession } from "@/lib/get-session"
 
 
-export default function Page() {
+
+export default async function Page() {
+    const session = await getServerSession();
+    if (!session) return <Unauthorised />
+
+    const user = session.user;
+
     return (
-        <div className="w-full min-h-screen flex flex-row">
-            <div className="w-[15%] bg-red-300">sidebar</div>
-            <div className="w-[85%] bg-red-500">body</div>
+        <div className="w-full min-h-screen flex justify-center">
+            <Plans user={user} />
         </div>
     )
 }

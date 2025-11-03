@@ -13,25 +13,26 @@ export interface IFormDataProps {
 }
 
 export interface IWorkoutPlanProps {
-    days: [{
+    days: {
+        id: string
         day: string
         focusArea: string
-        exercises: [{
+        exercises: {
             name: string
             sets: string
             reps: string
             restTime: string
             exercise_description: string
-        }]
-    }]
+        }[]
+    }[]
 };
 
 export interface IDietPlanProps {
     caloriesTarget: string
-    dietPlan: [{
+    dietPlan: {
         mealType: 'breakfast' | 'lunch' | 'snacks' | 'dinner',
         totalCalories: string
-        foodItems: [{
+        foodItems: {
             name: string
             quantity: string
             calories: string
@@ -40,8 +41,8 @@ export interface IDietPlanProps {
                 carbs: string
                 fats: string
             }
-        }]
-    }]
+        }[]
+    }[]
 }
 
 export interface IUserProps {
@@ -53,3 +54,58 @@ export interface IUserProps {
     name: string;
     image?: string | null | undefined;
 }
+
+export interface IClientWorkoutPlanProps {
+    id: string
+    userId: string
+    fitnessGoal: "Weight Loss" | "Muscle Gain" | "General Fitness" | "Strength Training"
+    fitnessLevel: "beginner" | "intermediate" | "advanced"
+    workoutLocation: "home" | "gym" | "outdoor"
+    planDuration: string
+    days: {
+        id: string
+        userId: string
+        planId: string
+        day: string
+        focusArea: string
+        exercises: {
+            id: string
+            name: string
+            sets: string
+            reps: string
+            restTime: string
+            imageUrl?: string
+            description: string
+        }[]
+    }[],
+    createdAt: Date
+    updatedAt: Date
+}
+
+export interface IFullWorkoutPlanProps {
+    id: string
+    userId: string
+    fitnessGoal: "Weight Loss" | "Muscle Gain" | "General Fitness" | "Strength Training"
+    fitnessLevel: "beginner" | "intermediate" | "advanced"
+    workoutLocation: "home" | "gym" | "outdoor"
+    planDuration: string
+    days: {
+        id: string
+        userId?: string
+        planId?: string
+        day: string
+        focusArea: string
+        exercises: {
+            id?: string
+            name: string
+            sets: string
+            reps: string
+            restTime: string
+            imageUrl?: string
+            description?: string
+        }[]
+    }[],
+    createdAt: Date
+    updatedAt: Date
+}
+

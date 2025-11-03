@@ -1,9 +1,8 @@
 import { ai } from "@/app/api/lib/utils";
 import { exercise, workoutDay, workoutPlan } from "@/db/schema/workout-schema";
 import { db } from "@/lib/db";
-import { IFormDataProps, IWorkoutPlanProps } from "@/utils/interfaces";
+import { IFormDataProps, IFullWorkoutPlanProps, IWorkoutPlanProps } from "@/utils/interfaces";
 import { Type } from "@google/genai"
-
 
 export const workoutPlanGenerator = async (userId: string, formData: IFormDataProps) => {
     const { age, gender, height, weight, fitnessGoal, fitnessLevel, workoutLocation, medHistory, stressLevel, planDuration } = formData;
@@ -122,6 +121,18 @@ Return ONLY the JSON response. No explanation text.
             })
             .returning()
 
+        const fullWorkoutPlan: IFullWorkoutPlanProps = {
+            id: savedWorkoutPlan.id,
+            userId: savedWorkoutPlan.userId,
+            fitnessGoal: savedWorkoutPlan.fitnessGoal,
+            fitnessLevel: savedWorkoutPlan.fitnessLevel,
+            workoutLocation: savedWorkoutPlan.workoutLocation,
+            planDuration: savedWorkoutPlan.planDuration,
+            days: [],
+            createdAt: savedWorkoutPlan.createdAt,
+            updatedAt: savedWorkoutPlan.updatedAt as Date
+        };
+
         for (const day of generatedWorkoutPlan.days) {
             const [savedWorkoutDay] = await db
                 .insert(workoutDay)
@@ -149,9 +160,21 @@ Return ONLY the JSON response. No explanation text.
                         description: exer.exercise_description
                     })
             }
+
+            fullWorkoutPlan.days.push({
+                id: savedWorkoutDay.id,
+                day: savedWorkoutDay.day,
+                focusArea: savedWorkoutDay.focusArea,
+                exercises: day.exercises.map((ex) => ({
+                    name: ex.name,
+                    sets: ex.sets,
+                    reps: ex.reps,
+                    restTime: ex.restTime,
+                }))
+            });
         };
 
-        return generatedWorkoutPlan;
+        return fullWorkoutPlan;
     } catch (error) {
         console.error('error while generating workout plan: ', error);
         throw new Error('something went wrong while generating workout plan');

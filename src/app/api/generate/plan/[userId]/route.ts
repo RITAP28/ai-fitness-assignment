@@ -9,7 +9,6 @@ export async function POST(req: NextRequest, { params } : { params : { userId: s
     if (!userId) return NextResponse.json({ error: 'missing user id, bad request' }, { status: 400 });
 
     const body = await req.json();
-    console.log('body: ', body);
     const { formData } : { formData: IFormDataProps } = body;
     console.log('formdata: ', formData);
     
@@ -30,14 +29,21 @@ export async function POST(req: NextRequest, { params } : { params : { userId: s
         const existingUser = await getExistingUser(userId);
         if (!existingUser) return NextResponse.json({ error: 'existing user not found' }, { status: 404 });
 
+        const dietPlan = [];
+
         const generatedWorkoutPlan = await workoutPlanGenerator(existingUser.id, formData);
-        const generatedDietPlan = await dietPlanGenerator(existingUser.id, formData);
+        console.log('generated workout plan: ', generatedWorkoutPlan);
+        for (const day of generatedWorkoutPlan.days) {
+            console.log(`Name of the day: ${day.day}: `, day);
+            const generatedDietPlan = await dietPlanGenerator(existingUser.id, day.id, day.focusArea, day.exercises, formData);
+            dietPlan.push(generatedDietPlan);
+        }
 
         return NextResponse.json({
             success: true,
             message: 'new workout plan and diet plan generated successfully',
             workoutPlan: generatedWorkoutPlan,
-            dietPlan: generatedDietPlan,
+            dietPlan: dietPlan,
         }, {
             status: 201
         });

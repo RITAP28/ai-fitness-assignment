@@ -40,7 +40,10 @@ export const workoutDayRelation = relations(workoutDay, ({ one, many }) => ({
         fields: [workoutDay.planId],
         references: [workoutPlan.id]
     }),
-    exercises: many(exercise)
+    exercises: many(exercise),
+    dietPlans: many(dietPlan),
+    meals: many(meal),
+    foodItems: many(foodItem)
 }));
 
 export const exerciseRelation = relations(exercise, ({ one }) => ({
@@ -63,6 +66,10 @@ export const dietPlanRelation = relations(dietPlan, ({ one, many }) => ({
         fields: [dietPlan.userId],
         references: [user.id]
     }),
+    day: one(workoutDay, {
+        fields: [dietPlan.dayId],
+        references: [workoutDay.id]
+    }),
     meals: many(meal),
     items: many(foodItem)
 }));
@@ -71,6 +78,10 @@ export const mealRelations = relations(meal, ({ one, many }) => ({
     user: one(user, {
         fields: [meal.userId],
         references: [user.id]
+    }),
+    day: one(workoutDay, {
+        fields: [meal.dayId],
+        references: [workoutDay.id]
     }),
     plan: one(dietPlan, {
         fields: [meal.planId],
@@ -83,6 +94,10 @@ export const foodItemRelations = relations(foodItem, ({ one }) => ({
     user: one(user, {
         fields: [foodItem.userId],
         references: [user.id]
+    }),
+    day: one(workoutDay, {
+        fields: [foodItem.dayId],
+        references: [workoutDay.id]
     }),
     plan: one(dietPlan, {
         fields: [foodItem.planId],
