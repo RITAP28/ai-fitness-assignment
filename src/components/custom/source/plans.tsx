@@ -11,6 +11,10 @@ import Form from "../form";
 import ExerciseModal from "../modals/exerciseModal";
 import RegenerationForm from "../regenrate.form";
 import ExportPdf from "./exportPDF";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import Header from "./header";
+import Quote from "./quote";
 
 interface IPlanProps {
     user: IUserProps
@@ -64,9 +68,11 @@ interface IClientWorkoutPlanProps {
 }
 
 export default function Plans({ user }: IPlanProps): React.ReactElement {
-    const { theme, toggleTheme } = useUIStore();
+    const { theme } = useUIStore();
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+
+    const [formOpen, setFormOpen] = useState<boolean>(false);
 
     const [plans, setPlans] = useState<IClientWorkoutPlanProps[]>([]);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -102,7 +108,7 @@ export default function Plans({ user }: IPlanProps): React.ReactElement {
 
     return (
         <div className={`w-full min-h-screen flex justify-center bg-white dark:bg-black`}>
-            <div className="w-[80%] px-4 py-2">
+            <div className="w-full md:w-[80%] px-4 py-2">
             {loading ? (
                 <div className="w-full h-full flex flex-col justify-center items-center gap-2">
                     <span className={`loader dark:border-white dark:border-r-transparent`} />
@@ -114,40 +120,28 @@ export default function Plans({ user }: IPlanProps): React.ReactElement {
                 </div>
             ) : (
                 <div className="w-full flex flex-col">
-                    <div className="w-full flex justify-between items-center">
-                        <p className={`tracking-tighter font-semibold text-4xl py-2 ${theme === 'dark' ? "text-yellow-500" : "text-black"}`}>Welcome, {user.name}</p>
-                        <div className="flex flex-row gap-4 items-center">
-                            <button
-                                type="button"
-                                className={`hover:cursor-pointer ${theme === 'dark' ? "hover:bg-gray-900" : "hover:bg-gray-100"} transition duration-300 ease-in-out p-1 rounded-full`}
-                                onClick={toggleTheme}
-                            >
-                                {theme === 'light' ? <Moon /> : <Sun />}
-                            </button>
-                            <button
-                                type="button"
-                                className={`px-4 py-1 bg-black font-bold ${theme === 'dark' ? "text-yellow-500 hover:bg-gray-900" : "text-white hover:bg-gray-700"} hover:cursor-pointer transition duration-300 ease-in-out rounded-md tracking-tight`}
-                                onClick={() => setRegenerateModal(true)}
-                            >
-                                Regenerate Plan
-                            </button>
-                            <button
-                                type="button"
-                                className={`px-4 py-1 bg-black font-bold ${theme === 'dark' ? "text-yellow-500 hover:bg-gray-900" : "text-white hover:bg-gray-700"} hover:cursor-pointer transition duration-300 ease-in-out rounded-md tracking-tight`}
-                            >
-                                Sign Out
-                            </button>
-                        </div>
-                    </div>
+                    <Header user={user} plans={plans} setRegenerateModal={setRegenerateModal} />
+                    <Quote user={user} />
                     {/* <p className="tracking-tight text-2xl">Here is your workout + diet plan</p> */}
                     <div className="w-full flex flex-col py-4">
                         {plans.length === 0 ? (
-                            <div className="w-full h-full flex justify-center items-center tracking-tighter font-semibold dark:text-yellow-500">No workout plans found</div>
+                            <div className="w-full flex flex-col">
+                                <div className="w-full h-full flex justify-center items-center tracking-tighter font-semibold dark:text-yellow-500">No workout plans found</div>
+                                <div className="w-full flex justify-center items-center">
+                                    <Button
+                                        className="px-4 py-1 text-lg tracking-tighter font-semibold rounded-md hover:cursor-pointer bg-black text-white hover:bg-gray-800 transition duration-300 ease-in-out dark:bg-gray-900 dark:hover:bg-gray-800 dark:text-yellow-500"
+                                        onClick={() => setFormOpen(true)}
+                                    >
+                                        Create
+                                    </Button>
+                                </div>
+                                {formOpen && <Form user={user} setFormOpen={setFormOpen} handleFetchWorkoutPlans={handleFetchWorkoutPlans} />}
+                            </div>
                         ) : (
                             plans.map((plan, index) => (
                                 <div key={index} className="w-full flex flex-col">
                                     <div className="w-full flex flex-col">
-                                        <div className="w-full grid grid-cols-4">
+                                        <div className="w-full grid grid-cols-2 md:grid-cols-4">
                                             <div className="w-full flex flex-row gap-2">
                                                 <p className="font-extralight">Fitness Goal:</p>
                                                 <p className={`font-bold tracking-tight ${theme === 'dark' ? "text-yellow-500" : "text-black"}`}>{plan.fitnessGoal}</p>
@@ -171,7 +165,7 @@ export default function Plans({ user }: IPlanProps): React.ReactElement {
                                             <div key={index} className="w-full flex flex-col py-2">
                                                 <p className={`font-bold ${theme === 'dark' ? "text-yellow-500" : "text-black"} text-2xl tracking-tight`}>{day.day}</p>
                                                 <p className="w-full text-lg tracking-tight font-extralight">Exercises:</p>
-                                                <div className="w-full grid grid-cols-5 gap-2 py-2">
+                                                <div className="w-full grid grid-cols-2 md:grid-cols-5 gap-2 py-2">
                                                     {day.exercises.map((ex, idx) => (
                                                         <div
                                                             key={idx}
@@ -258,7 +252,7 @@ export default function Plans({ user }: IPlanProps): React.ReactElement {
                             ))
                         )}
                     </div>
-                    {user && plans && <ExportPdf user={user} plan={plans} />}
+                    {user && plans.length > 0 && <ExportPdf user={user} plan={plans} />}
                 </div>
             )}
         </div> 

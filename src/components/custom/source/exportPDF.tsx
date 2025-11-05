@@ -55,7 +55,7 @@ interface IExportPDFProps {
     plan: IClientWorkoutPlanProps[]
 }
 
-export default function ExportPdf({ user, plan }: IExportPDFProps): React.ReactElement {
+export default function ExportPdf({ plan }: IExportPDFProps): React.ReactElement {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -87,8 +87,8 @@ export default function ExportPdf({ user, plan }: IExportPDFProps): React.ReactE
     return (
         <div className="w-full flex justify-center items-center">
             <button
+                className="bg-white text-black font-semibold tracking-tighter dark:text-yellow-500 dark:bg-gray-900 dark:hover:bg-gray-800 transition duration-300 ease-in-out hover:cursor-pointer px-4 py-2 rounded-md"
                 onClick={() => exportPlan()}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
             >
                 {loading ? (
                     <span className="w-full flex flex-row items-center gap-1 justify-center">

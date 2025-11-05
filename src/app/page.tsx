@@ -1,5 +1,4 @@
 import Hero from "@/components/custom/hero";
-import Unauthorised from "@/components/custom/unauthorised";
 import { getServerSession } from "@/lib/get-session";
 import { IUserProps } from "@/utils/interfaces";
 

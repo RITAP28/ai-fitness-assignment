@@ -111,7 +111,7 @@ export default function DietModal({ setModalOpen, diet, selectedMealType, user, 
 
                 {/* modal body */}
                 <div className="w-full flex flex-col gap-2 px-4 py-2">
-                    <div className="w-full grid grid-cols-3 gap-1">
+                    <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-1">
                     {diet.meals
                         .filter(d => d.mealType.toLowerCase() === selectedMealType?.toLowerCase())
                         .map((item, idx) => (

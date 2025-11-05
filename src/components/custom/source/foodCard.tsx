@@ -81,28 +81,28 @@ export default function FoodCard({ item, user, setPlans }: IFoodItemModalProps):
                 <FoodImgComponent user={user} item={item} imageUrl={item.imageUrl} setPlans={setPlans}  /> 
             </div>
             <div className="w-full flex flex-row gap-2 pt-2">
-                <p className="w-[30%] font-light">Name: </p>
-                <p className="w-[70%] font-medium">{item.name}</p>
+                <p className="md:w-[30%] font-light">Name: </p>
+                <p className="md:w-[70%] font-medium">{item.name}</p>
             </div>
             <div className="w-full flex flex-row gap-2">
-                <p className="w-[30%] font-light">Quantity: </p>
-                <p className="w-[70%] font-medium">{item.quantity}</p>
+                <p className="md:w-[30%] font-light">Quantity: </p>
+                <p className="md:w-[70%] font-medium">{item.quantity}</p>
             </div>
             <div className="w-full flex flex-row gap-2">
-                <p className="w-[30%] font-light">Calories: </p>
-                <p className="w-[70%] font-medium">{item.calories}</p>
+                <p className="md:w-[30%] font-light">Calories: </p>
+                <p className="md:w-[70%] font-medium">{item.calories}</p>
             </div>
             <div className="w-full flex flex-row gap-2">
-                <p className="w-[30%] font-light">Proteins: </p>
-                <p className="w-[70%] font-medium">{item.macros.protein}</p>
+                <p className="md:w-[30%] font-light">Proteins: </p>
+                <p className="md:w-[70%] font-medium">{item.macros.protein}</p>
             </div>
             <div className="w-full flex flex-row gap-2">
-                <p className="w-[30%] font-light">Carbs: </p>
-                <p className="w-[70%] font-medium">{item.macros.carbs}</p>
+                <p className="md:w-[30%] font-light">Carbs: </p>
+                <p className="md:w-[70%] font-medium">{item.macros.carbs}</p>
             </div>
             <div className="w-full flex flex-row gap-2">
-                <p className="w-[30%] font-light">Fats: </p>
-                <p className="w-[70%] font-medium">{item.macros.fats}</p>
+                <p className="md:w-[30%] font-light">Fats: </p>
+                <p className="md:w-[70%] font-medium">{item.macros.fats}</p>
             </div>
         </div>
     )
