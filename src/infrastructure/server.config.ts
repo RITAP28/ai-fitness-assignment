@@ -14,7 +14,8 @@ const serverConfig = {
 
     // SUPABASE CREDENTIALS
     SUPABASE_PROJECT_URL: process.env.SUPABASE_PROJECT_URL,
-    SUPABASE_API_KEY: process.env.SUPABASE_API_KEY
+    SUPABASE_API_KEY: process.env.SUPABASE_API_KEY,
+    FREEPIK_API_KEY: process.env.FREEPIK_API_KEY
 };
 
 export default serverConfig;

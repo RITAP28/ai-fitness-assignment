@@ -8,7 +8,7 @@ export default async function Home() {
   const user = session?.user;
 
   return (
-    <div className="w-full min-h-screen bg-gray-100 text-black">
+    <div className="w-full min-h-screen bg-gray-900 text-yellow-500">
       <Hero user={user as IUserProps} />
     </div>
   );

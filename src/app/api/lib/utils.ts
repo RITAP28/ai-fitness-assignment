@@ -7,3 +7,6 @@ export const ai = new GoogleGenAI({ apiKey: serverConfig.GEMINI_API_KEY });
 const supabase_project_url = serverConfig.SUPABASE_PROJECT_URL
 const supabase_api_key = serverConfig.SUPABASE_API_KEY
 export const supabase = createClient(supabase_project_url!, supabase_api_key!);
+export const freepik_api_key = serverConfig.FREEPIK_API_KEY as string;
+
+export const eleven_labs_api_key = process.env.ELEVENLABS_API_KEY

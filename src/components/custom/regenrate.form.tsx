@@ -26,9 +26,11 @@ import { useRouter } from "next/navigation"
 interface IFormProps {
     user: IUserProps
     setFormOpen: React.Dispatch<React.SetStateAction<boolean>>
+    planId: string
+    handleFetchWorkoutPlans: () => Promise<void>
 }
 
-export default function Form({ user, setFormOpen }: IFormProps): React.ReactElement {
+export default function RegenerationForm({ user, setFormOpen, planId, handleFetchWorkoutPlans}: IFormProps): React.ReactElement {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,11 +71,13 @@ export default function Form({ user, setFormOpen }: IFormProps): React.ReactElem
     };
 
     try {
-        const response = await axios.post(`/api/generate/plan/${user.id}`, {
+        const response = await axios.post(`/api/regenerate/${user.id}/${planId}`, {
             formData: formData
         });
+
         if (response.status === 201) {
-            router.push('/source');
+            handleFetchWorkoutPlans();
+            setFormOpen(false);
             toast.success("Plan generated successfully");
         }
     } catch (error) {

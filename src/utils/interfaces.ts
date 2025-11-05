@@ -109,3 +109,12 @@ export interface IFullWorkoutPlanProps {
     updatedAt: Date
 }
 
+export interface IExerciseProps {
+    id: string;
+    name: string;
+    sets: string;
+    reps: string;
+    restTime: string;
+    imageUrl?: string | undefined;
+    description: string;
+}
