@@ -53,7 +53,7 @@ interface IWorkoutPlanProps {
     updatedAt: Date
 }
 
-export async function GET(req: NextRequest, { params } : { params : { userId: string } }) {
+export async function GET(req: NextRequest, { params } : { params : Promise<{ userId: string } >}) {
     const { userId } = await params;
     if (!userId) return NextResponse.json({ error: 'missing user id, bad request' }, { status: 400 });
 
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest, { params } : { params : { userId: st
             fitnessLevel: plan.fitnessLevel,
             workoutLocation: plan.workoutLocation,
             planDuration: plan.planDuration,
-            days: [],
+            days: [], 
             createdAt: plan.createdAt,
             updatedAt: plan.updatedAt as Date
         };

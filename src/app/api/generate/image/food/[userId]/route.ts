@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ai } from "@/app/api/lib/utils";
 import { uploadGeneratedImage } from "@/app/api/lib/uploadImage";
 
-export async function POST(req: NextRequest, { params } : { params: { userId: string } }) {
+export async function POST(req: NextRequest, { params } : { params: Promise<{ userId: string }> }) {
     const { userId } = await params;
     if (!userId) return NextResponse.json({ error: 'missing user id, bad request' }, { status: 400 });
 
