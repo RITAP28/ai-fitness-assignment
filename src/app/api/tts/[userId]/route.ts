@@ -5,7 +5,7 @@ import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
 import { Readable } from "stream";
 import { audioPlanGenerator } from "@/services/audioPlan";
 
-export async function POST(req: NextRequest, { params } : { params: { userId: string } }) {
+export async function POST(req: NextRequest, { params } : { params: Promise<{ userId: string }> }) {
     const { userId } = await params;
     if (!userId) return NextResponse.json({ error: 'missing user id, bad request' }, { status: 400 });
 
