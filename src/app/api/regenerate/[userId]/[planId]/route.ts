@@ -7,7 +7,7 @@ import { IFormDataProps } from "@/utils/interfaces";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, { params } : { params : { userId: string, planId: string } }) {
+export async function POST(req: NextRequest, { params } : { params : Promise<{ userId: string, planId: string }> }) {
     const { userId, planId } = await params;
     if (!userId || !planId) return NextResponse.json({ error: 'missing params, bad request' }, { status: 400 });
 
