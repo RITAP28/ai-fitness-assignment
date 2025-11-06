@@ -1,7 +1,4 @@
 const serverConfig = {
-    DEV_URL: process.env.DEV_URL as string,
-    PROD_URL: process.env.PROD_URL as string,
-
     DEV_DB_URL: process.env.DEV_DB_URL as string,
     PROD_DB_URL: process.env.PROD_DB_URL as string,
 
