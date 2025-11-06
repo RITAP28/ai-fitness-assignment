@@ -4,8 +4,22 @@ import { db } from "@/lib/db";
 import { IFormDataProps, IFullWorkoutPlanProps, IWorkoutPlanProps } from "@/utils/interfaces";
 import { Type } from "@google/genai"
 
+const mapFitnessGoal = (goal: IFormDataProps['fitnessGoal']): 'Weight Loss' | 'Muscle Gain' | 'General Fitness' | 'Strength Training' => {
+    const goalMap = {
+        'weight_loss': 'Weight Loss',
+        'muscle_gain': 'Muscle Gain',
+        'general_fitness': 'General Fitness',
+        'strength_training': 'Strength Training',
+    } as const;
+    
+    return goal && goal in goalMap ? goalMap[goal as keyof typeof goalMap] : 'General Fitness';
+};
+
 export const workoutPlanGenerator = async (userId: string, formData: IFormDataProps) => {
     const { age, gender, height, weight, fitnessGoal, fitnessLevel, workoutLocation, medHistory, stressLevel, planDuration } = formData;
+    if (!userId || !fitnessGoal || !fitnessLevel || !workoutLocation || !planDuration) {
+        throw new Error('Missing required fields');
+    };
 
     const prompt = `
 You are an AI Fitness Coach. Generate a personalized workout plan based on the user's profile.
@@ -111,15 +125,15 @@ Return ONLY the JSON response. No explanation text.
         const [savedWorkoutPlan] = await db
             .insert(workoutPlan)
             .values({
-                userId: userId,
-                fitnessGoal: fitnessGoal === 'general_fitness' ? 'General Fitness' : fitnessGoal === 'muscle_gain' ? 'Muscle Gain' : fitnessGoal === 'strength_training' ? 'Strength Training' : 'Weight Loss',
-                fitnessLevel: fitnessLevel,
-                workoutLocation: workoutLocation,
-                planDuration: planDuration,
+                userId,
+                fitnessGoal: mapFitnessGoal(fitnessGoal),
+                fitnessLevel: fitnessLevel!,
+                workoutLocation: workoutLocation!,
+                planDuration: planDuration!,
                 createdAt: new Date(Date.now()),
-                updatedAt: new Date(Date.now())
+                updatedAt: new Date(Date.now()),
             })
-            .returning()
+            .returning();
 
         const fullWorkoutPlan: IFullWorkoutPlanProps = {
             id: savedWorkoutPlan.id,
